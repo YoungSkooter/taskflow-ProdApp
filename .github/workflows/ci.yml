@@ -1,32 +1,40 @@
-name: Continuous Integration
+name: TaskFlow CI/CD
 
 on:
   push:
     branches:
       - main
-      - develop
 
   pull_request:
     branches:
       - main
 
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  FRONTEND_REPOSITORY: 996860765311.dkr.ecr.us-east-2.amazonaws.com/taskflow-frontend
+  BACKEND_REPOSITORY: 996860765311.dkr.ecr.us-east-2.amazonaws.com/taskflow-backend
+
 jobs:
-  build:
+  build-and-push:
+
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
 
     steps:
 
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Install Backend Dependencies
-        working-directory: backend
-        run: npm ci
+      ############################
+      # Frontend
+      ############################
 
       - name: Install Frontend Dependencies
         working-directory: frontend
@@ -36,18 +44,73 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      ############################
+      # Backend
+      ############################
+
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm ci
+
       - name: Build Backend
         working-directory: backend
         run: npm run build --if-present
 
+      ############################
+      # Configure AWS
+      ############################
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      ############################
+      # Login to ECR
+      ############################
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      ############################
+      # Docker Metadata
+      ############################
+
+      - name: Set Image Tag
+        id: vars
+        run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      ############################
+      # Build & Push Backend
+      ############################
+
       - name: Build Backend Image
         run: |
           docker build \
-          -t taskflow-backend:latest \
-          ./backend
+            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.BACKEND_REPOSITORY }}:latest \
+            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.BACKEND_REPOSITORY }}:${{ steps.vars.outputs.TAG }} \
+            ./backend
+
+      - name: Push Backend Image
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.BACKEND_REPOSITORY }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.BACKEND_REPOSITORY }}:${{ steps.vars.outputs.TAG }}
+
+      ############################
+      # Build & Push Frontend
+      ############################
 
       - name: Build Frontend Image
         run: |
           docker build \
-          -t taskflow-frontend:latest \
-          ./frontend
+            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.FRONTEND_REPOSITORY }}:latest \
+            -t ${{ steps.login-ecr.outputs.registry }}/${{ env.FRONTEND_REPOSITORY }}:${{ steps.vars.outputs.TAG }} \
+            ./frontend
+
+      - name: Push Frontend Image
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.FRONTEND_REPOSITORY }}:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.FRONTEND_REPOSITORY }}:${{ steps.vars.outputs.TAG }}
