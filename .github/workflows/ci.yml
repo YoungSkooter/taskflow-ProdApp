@@ -11,8 +11,8 @@ on:
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  FRONTEND_REPOSITORY: 996860765311.dkr.ecr.us-east-2.amazonaws.com/taskflow-frontend
-  BACKEND_REPOSITORY: 996860765311.dkr.ecr.us-east-2.amazonaws.com/taskflow-backend
+  FRONTEND_REPOSITORY: taskflow-frontend
+  BACKEND_REPOSITORY: taskflow-backend
 
 jobs:
   build-and-push:
