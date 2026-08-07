@@ -1,24 +1,26 @@
-# Base image
-FROM node:22-alpine
+FROM node:22-alpine AS builder
 
-# Working directory
 WORKDIR /app
 
-LABEL maintainer="Skooter"
-LABEL application="taskflow"
-LABEL service="backend"
-
-# Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --omit=dev
+RUN npm ci
 
-# Copy application
 COPY . .
 
-# Expose API port
+RUN npm run build --if-present
+
+
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app ./
+
 EXPOSE 3000
 
-# Start application
 CMD ["npm", "start"]
