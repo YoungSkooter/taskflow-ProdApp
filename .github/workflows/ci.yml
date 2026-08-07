@@ -14,7 +14,8 @@ env:
   FRONTEND_REPOSITORY: taskflow-frontend
   BACKEND_REPOSITORY: taskflow-backend
 
-  K8S_REPO: your-github-username/taskflow-k8s
+  K8S_REPO: YoungSkooter/taskflow-k8s
+
   K8S_BRANCH: main
 
 jobs:
@@ -99,7 +100,7 @@ jobs:
       #########################################################
 
       - name: Trivy Filesystem Scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           scan-type: fs
           scan-ref: .
@@ -133,7 +134,7 @@ jobs:
       #########################################################
 
       - name: Scan Backend Image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.BACKEND_REPOSITORY }}:${{ steps.vars.outputs.TAG }}
           severity: HIGH,CRITICAL
@@ -144,7 +145,7 @@ jobs:
       #########################################################
 
       - name: Scan Frontend Image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.32.0
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.FRONTEND_REPOSITORY }}:${{ steps.vars.outputs.TAG }}
           severity: HIGH,CRITICAL
