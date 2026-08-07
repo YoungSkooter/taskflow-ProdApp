@@ -100,7 +100,7 @@ jobs:
       #########################################################
 
       - name: Trivy Filesystem Scan
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -134,7 +134,7 @@ jobs:
       #########################################################
 
       - name: Scan Backend Image
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.BACKEND_REPOSITORY }}:${{ steps.vars.outputs.TAG }}
           severity: HIGH,CRITICAL
@@ -145,7 +145,7 @@ jobs:
       #########################################################
 
       - name: Scan Frontend Image
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.FRONTEND_REPOSITORY }}:${{ steps.vars.outputs.TAG }}
           severity: HIGH,CRITICAL
