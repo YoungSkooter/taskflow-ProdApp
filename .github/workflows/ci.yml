@@ -1,4 +1,4 @@
-```yaml
+
 name: TaskFlow CI/CD
 
 on:
@@ -211,4 +211,3 @@ jobs:
           git commit -m "Update images to ${{ steps.vars.outputs.TAG }}"
 
           git push origin ${{ env.K8S_BRANCH }}
-```
