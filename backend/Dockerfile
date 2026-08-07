@@ -2,8 +2,10 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Update npm bundled with Node
 RUN npm install -g npm@latest
+
+# Patch vulnerable npm dependencies
+RUN npm install -g brace-expansion@5.0.8 ip-address@10.3.1
 
 COPY package*.json ./
 RUN npm ci
@@ -16,8 +18,10 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Update npm bundled with Node
 RUN npm install -g npm@latest
+
+# Patch vulnerable npm dependencies
+RUN npm install -g brace-expansion@5.0.8 ip-address@10.3.1
 
 COPY package*.json ./
 RUN npm ci --omit=dev
