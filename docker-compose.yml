@@ -1,11 +1,8 @@
 version: "3.9"
 
 services:
-
   postgres:
     image: postgres:16-alpine
-    container_name: taskflow-postgres
-
     restart: unless-stopped
 
     env_file:
@@ -22,16 +19,13 @@ services:
       - taskflow-network
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-
   redis:
     image: redis:7-alpine
-    container_name: taskflow-redis
-
     restart: unless-stopped
 
     ports:
@@ -46,12 +40,9 @@ services:
       timeout: 5s
       retries: 5
 
-
   backend:
     build:
       context: ./backend
-
-    container_name: taskflow-backend
 
     restart: unless-stopped
 
@@ -77,13 +68,11 @@ services:
       timeout: 5s
       retries: 5
 
-
   frontend:
     build:
       context: ./frontend
       args:
-        - VITE_API_URL=${VITE_API_URL} # Passes it from your machine to the build process
-    container_name: taskflow-frontend
+        VITE_API_URL: ${VITE_API_URL}
 
     restart: unless-stopped
 
@@ -91,19 +80,14 @@ services:
       backend:
         condition: service_healthy
 
-
     ports:
       - "80:80"
 
     networks:
       - taskflow-network
 
-
 volumes:
-
   postgres-data:
 
-
 networks:
-
   taskflow-network:
