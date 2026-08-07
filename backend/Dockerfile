@@ -2,6 +2,9 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+# Update npm bundled with Node
+RUN npm install -g npm@latest
+
 COPY package*.json ./
 RUN npm ci
 
@@ -13,10 +16,13 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Update npm bundled with Node
+RUN npm install -g npm@latest
+
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/src ./src
+COPY --from=builder /app ./
 
 EXPOSE 3000
 
