@@ -96,14 +96,25 @@ jobs:
         run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       #########################################################
-      # Trivy Filesystem Scan
+      # Trivy Filesystem Scan Backend
       #########################################################
 
       - name: Trivy Filesystem Scan
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
-          scan-ref: .
+          scan-ref: ./backend
+          severity: HIGH,CRITICAL
+          exit-code: 1
+
+     #########################################################
+      # Trivy Filesystem Scan Frontend
+      #########################################################
+      - name: Trivy Filesystem Scan - Frontend
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: ./frontend
           severity: HIGH,CRITICAL
           exit-code: 1
 
