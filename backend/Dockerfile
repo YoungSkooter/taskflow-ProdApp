@@ -27,7 +27,7 @@ RUN npm ci --omit=dev
 
 # Fix the bug: Copy only the built output files from the builder,
 # do NOT copy the builder's node_modules folder over the runner's clean modules.
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app ./
 # If you run a standard Node script instead of a framework builder, copy source code:
 # COPY --from=builder /app/src ./src
 
