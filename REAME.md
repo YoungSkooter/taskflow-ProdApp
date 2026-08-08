@@ -1,3 +1,5 @@
+Welcome:
+
 For production change nginx to 
 
     location /api {
@@ -5,3 +7,4 @@ For production change nginx to
     }
 
         proxy_pass http://backend:3000; = dev environment
+
