@@ -12,5 +12,5 @@ And in .env
     [SSL=TRUE] #= production environment
     [SSL=Flase] #= dev environment
 
-    
-Thanks.
+
+Thanks..
