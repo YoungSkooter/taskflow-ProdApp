@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/health", healthRoutes);
+app.use("/health", healthRoutes);
 app.use("/api/tasks", taskRoutes);
 
 export default app;
