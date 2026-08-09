@@ -8,9 +8,9 @@ For production change nginx to
 
         proxy_pass http://backend:3000; #= dev environment
 
-And in .env 
-    [SSL=TRUE] #= production environment
-    [SSL=Flase] #= dev environment
+And in .env ;lowercase,,,
+    [SSL=true] #= production environment
+    [SSL=false] #= dev environment
 
 
 Thanks..
