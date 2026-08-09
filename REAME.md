@@ -8,3 +8,4 @@ For production change nginx to
 
         proxy_pass http://backend:3000; = dev environment
 
+Thanks
